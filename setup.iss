@@ -44,6 +44,21 @@ SetupIconFile=app\resources\icon.ico
 UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
+; Embedded Windows Binary Version & Publisher Information (Windows File Properties)
+VersionInfoCompany={#MyAppPublisher}
+VersionInfoDescription={#MyAppName} Setup
+VersionInfoVersion={#MyAppVersion}.0
+VersionInfoCopyright=Copyright (C) 2026 {#MyAppPublisher}
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoOriginalFileName={#OutputBaseFilename}.exe
+
+; Code Signing Integration (Inno Setup SignTool)
+; When a certificate is configured in Inno Setup (Tools -> Configure Sign Tools),
+; uncomment SignTool below to automatically sign the installer and uninstaller.
+; SignTool=signtool
+; SignedUninstaller=yes
+
 ; Modern styling and high compression
 Compression=lzma2/ultra64
 SolidCompression=yes
