@@ -1,0 +1,20 @@
+Xeon - Scrcpy Controller
+
+This application uses the following third-party software:
+
+1. scrcpy (Apache License 2.0)
+   https://github.com/Genymobile/scrcpy
+   Copyright (C) Genymobile
+
+2. ADB - Android Debug Bridge (Apache License 2.0)
+   Part of Android SDK Platform Tools
+   https://developer.android.com/tools/releases/platform-tools
+
+3. PyQt6 (GPL v3)
+   https://www.riverbankcomputing.com/software/pyqt/
+   Copyright (c) Riverbank Computing Limited
+
+4. Python (Python Software Foundation License)
+   https://www.python.org/
+
+Please refer to each project for full license texts.

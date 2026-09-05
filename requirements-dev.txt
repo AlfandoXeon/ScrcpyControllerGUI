@@ -1,0 +1,4 @@
+PyQt6>=6.4.0
+PyInstaller>=5.0
+pytest>=7.0
+Pillow>=9.0

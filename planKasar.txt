@@ -1,0 +1,1888 @@
+saya ingin membuat aplikasi
+
+Nama aplikasi = Xeon - Scrcpy Controller
+Nama developer = AlfandoXeon
+Bahasa = Python + Pyqts6 (OOP + MVC )
+folder scrcpy = /Scrcpy-win64-v4.1
+
+
+
+
+# PROJECT: Scrcpy Controller
+
+Anda adalah senior Python desktop application engineer yang bertanggung jawab membangun aplikasi Windows desktop bernama:
+
+**Scrcpy Controller**
+
+Aplikasi ini adalah GUI frontend/controller untuk `scrcpy` dan `adb`.
+
+Tujuan utama aplikasi:
+
+> Membungkus penggunaan scrcpy CLI menjadi aplikasi GUI Windows yang user-friendly, klasik, lengkap, stabil, dan mudah digunakan tanpa pengguna harus memahami command line.
+
+Aplikasi akan mendistribusikan `scrcpy.exe`, `adb.exe`, dan dependency terkait di dalam folder aplikasi.
+
+Target platform utama:
+
+**Windows 10 dan Windows 11 64-bit**
+
+Bahasa:
+
+**Python 3.x**
+
+GUI:
+
+**PyQt6**
+
+Arsitektur:
+
+**OOP + MVC**
+
+Packaging:
+
+**PyInstaller**
+
+Installer:
+
+**Inno Setup**
+
+---
+
+# 1. FILOSOFI PROJECT
+
+Prioritas project:
+
+1. Stability
+2. Reliability
+3. Correctness
+4. Maintainability
+5. Usability
+6. Feature completeness
+7. Visual appearance
+
+Jangan mengorbankan stabilitas hanya demi UI yang terlihat modern.
+
+Saya lebih menyukai:
+
+> klasik, profesional, compact, full-feature, jelas, familiar, dan reliable
+
+daripada:
+
+> terlalu modern, banyak animasi, glassmorphism, efek visual, tetapi mudah bug.
+
+Jangan menggunakan desain yang terlalu eksperimental.
+
+UI harus terasa seperti software desktop Windows sungguhan.
+
+---
+
+# 2. PRINSIP UTAMA DEVELOPMENT
+
+JANGAN langsung membuat seluruh aplikasi sekaligus.
+
+Kerjakan secara bertahap.
+
+Urutan development:
+
+PHASE 1
+
+* Project structure
+* MVC architecture
+* Application entry point
+* Configuration system
+* Logging
+
+PHASE 2
+
+* ADB detection
+* ADB process manager
+* Device discovery
+* Device information
+
+PHASE 3
+
+* Scrcpy process manager
+* Command builder
+* Launch scrcpy
+* Stop scrcpy
+* Process monitoring
+
+PHASE 4
+
+* Main GUI
+* Device selector
+* Display configuration
+* Audio configuration
+* Behavior configuration
+
+PHASE 5
+
+* Advanced configuration
+* Presets
+* Custom arguments
+* Wireless ADB
+
+PHASE 6
+
+* Error handling
+* Validation
+* Logging UI
+* Edge cases
+
+PHASE 7
+
+* Packaging
+* PyInstaller
+* build.bat
+* Inno Setup
+
+PHASE 8
+
+* Testing
+* Bug fixing
+* Final audit
+
+Setelah setiap phase selesai, lakukan review terhadap architecture dan kemungkinan bug sebelum melanjutkan.
+
+---
+
+# 3. ARSITEKTUR
+
+Gunakan MVC.
+
+Jangan membuat semua logic di satu file.
+
+Gunakan struktur kira-kira:
+
+project_root/
+│
+├── app/
+│   ├── **init**.py
+│   ├── main.py
+│   │
+│   ├── models/
+│   │   ├── **init**.py
+│   │   ├── device.py
+│   │   ├── config.py
+│   │   └── preset.py
+│   │
+│   ├── views/
+│   │   ├── **init**.py
+│   │   ├── main_window.py
+│   │   ├── device_panel.py
+│   │   ├── display_panel.py
+│   │   ├── audio_panel.py
+│   │   ├── behavior_panel.py
+│   │   ├── advanced_panel.py
+│   │   └── dialogs/
+│   │
+│   ├── controllers/
+│   │   ├── **init**.py
+│   │   ├── main_controller.py
+│   │   ├── device_controller.py
+│   │   └── scrcpy_controller.py
+│   │
+│   ├── services/
+│   │   ├── **init**.py
+│   │   ├── adb_service.py
+│   │   ├── scrcpy_service.py
+│   │   ├── process_service.py
+│   │   ├── config_service.py
+│   │   └── preset_service.py
+│   │
+│   ├── utils/
+│   │   ├── **init**.py
+│   │   ├── paths.py
+│   │   ├── logger.py
+│   │   ├── validators.py
+│   │   └── platform.py
+│   │
+│   └── resources/
+│
+├── runtime/
+│   ├── scrcpy/
+│   │   ├── scrcpy.exe
+│   │   └── dependencies...
+│   │
+│   └── adb/
+│       ├── adb.exe
+│       ├── AdbWinApi.dll
+│       └── AdbWinUsbApi.dll
+│
+├── config/
+│
+├── logs/
+│
+├── tests/
+│
+├── requirements.txt
+├── build.bat
+├── setup.iss
+├── README.md
+└── .gitignore
+
+Boleh mengubah struktur jika ada alasan teknis yang lebih baik, tetapi jangan membuat architecture monolithic.
+
+---
+
+# 4. OOP REQUIREMENT
+
+Gunakan object-oriented programming secara konsisten.
+
+Contoh class yang diharapkan:
+
+ADBService
+DeviceManager
+ScrcpyService
+ScrcpyProcess
+CommandBuilder
+ConfigManager
+PresetManager
+MainController
+DeviceController
+MainWindow
+
+Pisahkan responsibility masing-masing class.
+
+Jangan membuat class God Object.
+
+Contoh:
+
+JANGAN:
+
+ApplicationManager menangani:
+
+* GUI
+* ADB
+* scrcpy
+* configuration
+* logging
+* process
+* installer
+
+Lebih baik pisahkan responsibility.
+
+---
+
+# 5. MVC
+
+Gunakan prinsip:
+
+# MODEL
+
+data dan state
+
+# VIEW
+
+GUI dan presentation
+
+# CONTROLLER
+
+logic dan koordinasi
+
+# SERVICE
+
+operasi eksternal seperti ADB dan scrcpy.
+
+Walaupun service layer secara teoritis bukan bagian klasik MVC, gunakan service layer agar controller tidak menangani low-level subprocess secara langsung.
+
+---
+
+# 6. ADB
+
+Aplikasi harus dapat menemukan ADB yang dibundel.
+
+Jangan mengandalkan:
+
+adb.exe
+
+di PATH Windows.
+
+Prioritas:
+
+1. bundled ADB
+2. fallback hanya jika memang diperlukan
+
+Path harus dihitung secara dinamis.
+
+Jangan hardcode:
+
+C:\Program Files...
+
+Gunakan path relatif terhadap application root/executable.
+
+---
+
+# 7. ADB SERVICE
+
+Buat ADBService yang bertanggung jawab untuk:
+
+* start ADB server
+* stop ADB server jika diperlukan
+* execute adb command
+* get devices
+* get device state
+* get device information
+* connect wireless device
+* disconnect wireless device
+* restart ADB server
+
+Contoh command:
+
+adb start-server
+
+adb devices
+
+adb shell getprop
+
+adb connect IP:PORT
+
+adb disconnect IP:PORT
+
+Jangan menjalankan subprocess secara blocking di GUI thread.
+
+Gunakan QThread, QRunnable/QThreadPool, atau mekanisme asynchronous PyQt6 yang tepat.
+
+GUI harus tetap responsive.
+
+---
+
+# 8. DEVICE MODEL
+
+Buat model device.
+
+Minimal informasi:
+
+* serial
+* state
+* model
+* manufacturer
+* Android version
+* SDK version
+* transport type
+
+Contoh:
+
+Device(
+serial="192.168.1.5:5555",
+state="device",
+model="Redmi Note 30 Pro",
+manufacturer="Xiaomi",
+android_version="14"
+)
+
+State yang perlu ditangani:
+
+device
+offline
+unauthorized
+unknown
+
+---
+
+# 9. DEVICE DETECTION FLOW
+
+Ketika aplikasi dibuka:
+
+1. Initialize application
+2. Load configuration
+3. Locate bundled ADB
+4. Check ADB executable
+5. Start ADB server
+6. Query devices
+7. Populate device list
+8. Update status indicator
+
+Jika device ditemukan:
+
+"1 device connected"
+
+Jika tidak:
+
+"No Android device detected"
+
+Jangan crash.
+
+---
+
+# 10. DEVICE REFRESH
+
+Sediakan tombol:
+
+Refresh
+
+Ketika ditekan:
+
+1. execute adb devices
+2. parse result
+3. update model
+4. update GUI
+
+Jangan freeze UI.
+
+Tambahkan automatic refresh dengan interval yang wajar jika memang diperlukan.
+
+Jangan melakukan polling terlalu agresif.
+
+---
+
+# 11. DEVICE STATUS
+
+Gunakan status yang jelas.
+
+Contoh:
+
+● Connected
+● Unauthorized
+● Offline
+● Not detected
+
+Untuk unauthorized:
+
+"USB debugging authorization is required."
+
+Untuk offline:
+
+"Device is offline."
+
+Untuk tidak ada device:
+
+"No Android device detected."
+
+---
+
+# 12. SCRCPY SERVICE
+
+Buat ScrcpyService yang bertanggung jawab terhadap:
+
+* locate scrcpy.exe
+* build command
+* launch scrcpy
+* monitor process
+* terminate process
+* detect process exit
+* report errors
+
+Jangan membuat ulang teknologi mirroring.
+
+Aplikasi hanya menjadi GUI/controller untuk scrcpy.
+
+---
+
+# 13. COMMAND BUILDER
+
+Ini adalah komponen penting.
+
+Jangan membuat command menggunakan string concatenation yang rawan error.
+
+Gunakan struktur argument list.
+
+Contoh:
+
+[
+scrcpy_path,
+"--serial",
+device_serial,
+"--max-size",
+"1920",
+"--max-fps",
+"60"
+]
+
+Gunakan subprocess dengan argument list.
+
+Jangan menggunakan shell=True kecuali benar-benar diperlukan.
+
+Hindari command injection.
+
+---
+
+# 14. BASIC SCRCPY CONFIGURATION
+
+GUI minimal harus mendukung konfigurasi:
+
+## Device
+
+* device selector
+* refresh
+* device information
+
+## Video
+
+* resolution / max size
+* FPS
+* bitrate
+* codec jika didukung
+* orientation jika relevan
+
+## Audio
+
+* enable/disable audio
+* audio source / related options jika tersedia pada versi scrcpy yang dibundel
+
+## Window
+
+* fullscreen
+* always on top
+* borderless jika tersedia
+* window title
+
+## Behavior
+
+* stay awake
+* turn screen off
+* show touches
+* disable screen saver/related supported options
+
+Jangan membuat option yang tidak benar-benar didukung oleh versi scrcpy yang dibundel.
+
+---
+
+# 15. VERSION COMPATIBILITY
+
+Ini sangat penting.
+
+Jangan mengasumsikan semua opsi scrcpy tersedia pada semua versi.
+
+Aplikasi harus memiliki satu sumber kebenaran untuk:
+
+* bundled scrcpy version
+* supported arguments
+
+Jika memungkinkan, buat:
+
+ScrcpyCapabilities
+
+atau mekanisme equivalent.
+
+Jika sebuah opsi tidak tersedia pada bundled version:
+
+* jangan expose option tersebut
+  ATAU
+* disable option
+  ATAU
+* tampilkan warning.
+
+Jangan membuat GUI yang menghasilkan command invalid.
+
+---
+
+# 16. ADVANCED OPTIONS
+
+Sediakan tab:
+
+Advanced
+
+Tetapi jangan membuat GUI checkbox untuk setiap kemungkinan scrcpy argument.
+
+Sediakan:
+
+Custom Arguments
+
+Contoh:
+
+--no-control
+--show-touches
+
+Validasi input sebisa mungkin.
+
+Custom arguments tidak boleh menghancurkan command utama.
+
+Pisahkan:
+
+generated arguments
+
+dengan
+
+custom arguments.
+
+---
+
+# 17. PRESETS
+
+Buat sistem preset.
+
+Contoh preset:
+
+Gaming
+Recording
+Low Bandwidth
+High Quality
+Default
+
+Preset menyimpan configuration object.
+
+Contoh:
+
+{
+"name": "Gaming",
+"max_size": 1920,
+"max_fps": 60,
+"bitrate": "12M",
+"audio": true,
+"fullscreen": true
+}
+
+User dapat:
+
+* select preset
+* save preset
+* delete preset
+* overwrite preset
+
+Jangan menyimpan preset di source code.
+
+Gunakan JSON.
+
+---
+
+# 18. CONFIGURATION
+
+Gunakan JSON untuk konfigurasi user.
+
+Contoh:
+
+config/settings.json
+
+Pisahkan:
+
+application settings
+
+dengan:
+
+user presets
+
+Jangan menyimpan data configuration di source code.
+
+Jika configuration corrupt:
+
+1. jangan crash
+2. backup corrupt file jika memungkinkan
+3. reset ke default
+4. log error.
+
+---
+
+# 19. MAIN WINDOW
+
+Main Window harus klasik dan professional.
+
+Tidak perlu:
+
+* excessive animation
+* glassmorphism
+* excessive rounded cards
+* huge empty spaces
+* unnecessary gradients
+
+Prioritaskan:
+
+* clear hierarchy
+* compact layout
+* consistent spacing
+* readable typography
+* keyboard accessibility
+* clear status information.
+
+---
+
+# 20. RECOMMENDED GUI LAYOUT
+
+Gunakan layout seperti:
+
+---
+
+## Scrcpy Controller                         - □ X
+
+[Device] [Display] [Audio] [Window] [Advanced]
+
+---
+
+Device
+
+[ Redmi Note 30 Pro                         ▼ ]
+
+Status:
+● Connected
+
+[ Refresh ] [ Device Info ]
+
+---
+
+Display
+
+Resolution:
+[ 1920 ▼ ]
+
+Framerate:
+[ 60 FPS ▼ ]
+
+Bitrate:
+[ 8 Mbps ▼ ]
+
+---
+
+Behavior
+
+☑ Stay Awake
+☐ Turn Screen Off
+☐ Show Touches
+☐ Always On Top
+☐ Fullscreen
+
+---
+
+Preset:
+[ Gaming ▼ ]    [ Save ] [ Manage ]
+
+```
+                [ START SCRCPY ]
+```
+
+---
+
+Status:
+Ready
+-----
+
+Silakan improve layout jika ada alasan UX yang kuat.
+
+---
+
+# 21. DEVICE INFORMATION DIALOG
+
+Sediakan dialog:
+
+Device Information
+
+Contoh:
+
+Model:
+Redmi Note 30 Pro
+
+Manufacturer:
+Xiaomi
+
+Android:
+14
+
+SDK:
+34
+
+Serial:
+XXXXXXXX
+
+Connection:
+USB
+
+Tambahkan tombol:
+
+Copy
+
+---
+
+# 22. WIRELESS ADB
+
+Jika memungkinkan, sediakan panel:
+
+Wireless ADB
+
+IP Address:
+[ 192.168.1.10 ]
+
+Port:
+[ 5555 ]
+
+[ Connect ]
+
+[ Disconnect ]
+
+Flow:
+
+adb connect IP:PORT
+
+Kemudian refresh devices.
+
+Jangan menyembunyikan error.
+
+Jika gagal:
+
+"Failed to connect to device."
+
+Tampilkan detail teknis melalui expandable/log dialog.
+
+---
+
+# 23. ERROR HANDLING
+
+Ini salah satu prioritas tertinggi.
+
+Aplikasi tidak boleh crash hanya karena:
+
+* adb.exe tidak ditemukan
+* scrcpy.exe tidak ditemukan
+* DLL hilang
+* device disconnect
+* unauthorized device
+* offline device
+* scrcpy process crash
+* malformed configuration
+* invalid custom arguments
+* invalid wireless address
+* subprocess timeout
+* permission issue
+
+Setiap error harus memiliki:
+
+1. user-friendly message
+2. technical log
+
+Contoh:
+
+User:
+
+"Unable to start scrcpy."
+
+Technical log:
+
+"scrcpy process exited with code 1."
+
+Jangan menampilkan traceback Python kepada user biasa.
+
+---
+
+# 24. LOGGING
+
+Gunakan Python logging.
+
+Log file:
+
+logs/application.log
+
+Log level:
+
+DEBUG
+INFO
+WARNING
+ERROR
+CRITICAL
+
+Jangan log:
+
+* password
+* secrets
+* unnecessary personal information
+
+Log harus membantu debugging.
+
+---
+
+# 25. LOG VIEWER
+
+Jika memungkinkan, buat:
+
+Help / Diagnostics / Logs
+
+User dapat membuka log folder.
+
+Tambahkan:
+
+Open Logs Folder
+
+dan:
+
+Copy Diagnostics
+
+Jika fitur ini dibuat, jangan memasukkan informasi sensitif.
+
+---
+
+# 26. PROCESS MANAGEMENT
+
+Ketika menjalankan:
+
+scrcpy.exe
+
+gunakan subprocess secara aman.
+
+Simpan reference process.
+
+Monitor:
+
+* running
+* exited
+* failed
+
+Jika scrcpy ditutup oleh user:
+
+GUI tidak boleh menganggap aplikasi crash.
+
+Update status menjadi:
+
+"Scrcpy stopped."
+
+Jika device disconnect:
+
+tangani gracefully.
+
+---
+
+# 27. MULTIPLE DEVICES
+
+Aplikasi harus mendukung lebih dari satu device.
+
+Contoh:
+
+adb devices
+
+192.168.1.10:5555 device
+R58M123456 device
+
+GUI harus memungkinkan user memilih salah satu.
+
+Jangan menggunakan:
+
+adb shell ...
+
+tanpa menentukan serial ketika multiple device aktif.
+
+Gunakan:
+
+adb -s SERIAL ...
+
+---
+
+# 28. PATH MANAGEMENT
+
+Buat utility:
+
+PathManager
+
+atau equivalent.
+
+Harus bisa menentukan root aplikasi baik ketika:
+
+development mode
+
+maupun:
+
+PyInstaller frozen mode.
+
+Gunakan pendekatan yang kompatibel dengan PyInstaller.
+
+Jangan mengandalkan current working directory.
+
+---
+
+# 29. PYINSTALLER
+
+Buat:
+
+build.bat
+
+Build harus:
+
+1. clean build
+2. remove old dist
+3. remove old build
+4. run PyInstaller
+5. copy required runtime files
+6. verify output
+7. report success/failure
+
+Gunakan mode yang cocok untuk aplikasi GUI Windows.
+
+Jangan membuka console window ketika user menjalankan application.
+
+Namun jangan menghilangkan logging internal.
+
+Target:
+
+dist/ScrcpyController/
+
+atau one-folder distribution.
+
+Saya lebih memilih:
+
+**onedir**
+
+daripada onefile karena aplikasi membawa:
+
+* scrcpy
+* adb
+* DLL
+* resources
+
+dan membutuhkan runtime files.
+
+---
+
+# 30. PYINSTALLER
+
+Jangan memasukkan:
+
+runtime/scrcpy
+
+dan
+
+runtime/adb
+
+ke dalam executable Python secara tidak perlu.
+
+Lebih baik struktur output:
+
+dist/
+└── ScrcpyController/
+├── ScrcpyController.exe
+├── runtime/
+│   ├── scrcpy/
+│   └── adb/
+├── config/
+├── logs/
+└── resources/
+
+Dengan demikian dependency eksternal tetap jelas.
+
+Jika menggunakan .spec file, buat:
+
+ScrcpyController.spec
+
+Jangan bergantung sepenuhnya pada command PyInstaller yang terlalu panjang di BAT.
+
+---
+
+# 31. BUILD.BAT
+
+Buat build.bat yang mudah dipahami.
+
+Harus:
+
+* check Python
+* check pip
+* check PyInstaller
+* install requirements jika diperlukan
+* clean build
+* run PyInstaller
+* copy runtime
+* verify executable
+* output build result
+
+Jika gagal:
+
+echo error yang jelas
+exit /b 1
+
+Jangan menggunakan command yang berpotensi menghapus folder sembarangan.
+
+Semua path harus relatif terhadap project root.
+
+---
+
+# 32. INNO SETUP
+
+Buat:
+
+setup.iss
+
+Installer harus:
+
+* install application
+* install runtime
+* create Start Menu shortcut
+* optionally create Desktop shortcut
+* create uninstaller
+* use application icon
+* support standard Program Files installation
+* handle existing installation
+* preserve user configuration jika memungkinkan
+
+Application name:
+
+Scrcpy Controller
+
+Version:
+
+gunakan satu sumber version.
+
+Jangan menulis version berbeda-beda di banyak file.
+
+---
+
+# 33. IMPORTANT INSTALLATION BEHAVIOR
+
+Jangan menyimpan user configuration di:
+
+Program Files
+
+karena user biasa dapat memiliki permission terbatas.
+
+Untuk user configuration, gunakan lokasi user seperti:
+
+%APPDATA%\Scrcpy Controller\
+
+atau lokasi Windows user-data yang sesuai.
+
+Runtime aplikasi tetap di installation directory.
+
+Pisahkan:
+
+APPLICATION FILES
+
+dari:
+
+USER DATA
+
+---
+
+# 34. SECURITY
+
+Jangan:
+
+* shell=True tanpa alasan
+* concatenate arbitrary command string
+* execute arbitrary files dari custom argument
+* mengubah PATH Windows secara permanen
+* membutuhkan Administrator jika tidak diperlukan.
+
+Gunakan subprocess argument list.
+
+Validasi input.
+
+---
+
+# 35. UI THREAD
+
+Ini WAJIB.
+
+Jangan menjalankan:
+
+adb devices
+adb shell getprop
+adb connect
+scrcpy process monitoring
+
+secara blocking di main GUI thread.
+
+UI harus tetap responsif.
+
+Gunakan PyQt6 threading architecture.
+
+Pastikan signal/slot digunakan dengan benar.
+
+Hindari race condition.
+
+---
+
+# 36. RESOURCE MANAGEMENT
+
+Semua subprocess dan thread harus ditangani dengan benar.
+
+Ketika aplikasi ditutup:
+
+1. stop worker
+2. stop monitoring
+3. release resources
+4. jangan meninggalkan zombie process jika memang process milik aplikasi
+5. close application
+
+Jangan membunuh semua process bernama:
+
+scrcpy.exe
+
+karena user mungkin menjalankan scrcpy lain di luar aplikasi.
+
+Hanya kelola process yang dibuat oleh aplikasi.
+
+---
+
+# 37. DESIGN PHILOSOPHY
+
+Visual style:
+
+Classic Windows Desktop Software.
+
+Karakteristik:
+
+* compact
+* functional
+* professional
+* clear
+* dense information
+* full-feature
+* minimal animation
+
+Jangan menggunakan terlalu banyak:
+
+* rounded cards
+* giant buttons
+* huge padding
+* gradients
+* glassmorphism
+* decorative elements.
+
+Saya lebih menyukai software yang terlihat seperti:
+
+"professional engineering utility"
+
+daripada:
+
+"marketing website converted into desktop app".
+
+---
+
+# 38. THEME
+
+Minimal:
+
+Light Theme
+Dark Theme
+
+Namun jangan memprioritaskan theme sebelum functionality stabil.
+
+Jika implementasi theme menambah kompleksitas atau bug:
+
+prioritaskan Light Theme yang stabil terlebih dahulu.
+
+---
+
+# 39. STATUS BAR
+
+Gunakan status bar.
+
+Contoh:
+
+Ready
+
+ADB: Running
+
+Device: Redmi Note 30 Pro
+
+Scrcpy: Stopped
+
+Ketika running:
+
+ADB: Running
+Device: Connected
+Scrcpy: Running
+
+---
+
+# 40. USER EXPERIENCE FLOW
+
+Normal flow:
+
+Application Start
+↓
+Initialize
+↓
+Load Configuration
+↓
+Locate Runtime
+↓
+Start ADB
+↓
+Detect Devices
+↓
+Show Main Window
+↓
+User selects device
+↓
+User configures scrcpy
+↓
+User clicks START
+↓
+Validate configuration
+↓
+Build command
+↓
+Show optional command preview
+↓
+Launch scrcpy
+↓
+Monitor process
+↓
+Update status
+↓
+User closes scrcpy
+↓
+Return to Ready state
+
+---
+
+# 41. NO DEVICE FLOW
+
+Application Start
+↓
+ADB initialized
+↓
+No device detected
+↓
+Show:
+"No Android device detected."
+↓
+User connects device
+↓
+Refresh
+↓
+Device detected
+↓
+Enable Start button
+
+START button harus disabled jika tidak ada valid device.
+
+---
+
+# 42. UNAUTHORIZED FLOW
+
+ADB returns:
+
+unauthorized
+
+GUI:
+
+Device:
+Redmi Note 30 Pro
+
+Status:
+Unauthorized
+
+Message:
+
+"Please unlock your device and allow USB debugging."
+
+Start button:
+
+Disabled
+
+Setelah authorization:
+
+Refresh
+
+Device menjadi:
+
+Connected
+
+Start enabled.
+
+---
+
+# 43. SCRCPY ERROR FLOW
+
+User klik Start.
+
+```
+    ↓
+```
+
+Validate
+↓
+Build command
+↓
+Launch
+↓
+Process exits unexpectedly
+↓
+Show:
+"Scrcpy failed to start."
+
+Buttons:
+
+[ View Logs ]
+
+[ Copy Error ]
+
+Technical details masuk log.
+
+---
+
+# 44. COMMAND PREVIEW
+
+Tambahkan opsi:
+
+Show Command
+
+Untuk debugging.
+
+Contoh:
+
+scrcpy.exe --serial "R58M123456" --max-size 1920 --max-fps 60 ...
+
+Berikan tombol:
+
+Copy Command
+
+Ini sangat membantu developer.
+
+Namun jangan tampilkan command preview sebagai requirement untuk user biasa.
+
+---
+
+# 45. TESTING
+
+Buat test untuk minimal:
+
+* config parsing
+* config validation
+* device parsing
+* command builder
+* path detection
+* preset save/load
+
+Test harus bisa dijalankan tanpa Android device jika memungkinkan.
+
+Contoh:
+
+ADB output parser harus bisa dites menggunakan mock string.
+
+Jangan membuat seluruh testing bergantung pada hardware Android.
+
+---
+
+# 46. MOCK MODE
+
+Jika memungkinkan, buat development/mock mode.
+
+Contoh:
+
+MOCK_ADB = true
+
+Dengan mock:
+
+Device list:
+
+Mock Redmi Note 30 Pro
+Mock Samsung Galaxy
+
+Ini memungkinkan UI development tanpa Android device.
+
+Jangan aktifkan mock mode pada production build.
+
+---
+
+# 47. DEPENDENCY MANAGEMENT
+
+Minimalkan dependency.
+
+Prioritas:
+
+Python standard library
++
+PyQt6
++
+PyInstaller
+
+Jangan menambahkan library eksternal hanya untuk hal yang dapat dilakukan dengan standard library.
+
+Setiap dependency tambahan harus memiliki alasan.
+
+---
+
+# 48. REQUIREMENTS.TXT
+
+Buat requirements.txt.
+
+Pisahkan:
+
+runtime dependencies
+
+dari:
+
+development/build dependencies
+
+Jika perlu:
+
+requirements.txt
+requirements-dev.txt
+
+---
+
+# 49. VERSIONING
+
+Buat satu central version.
+
+Contoh:
+
+app/version.py
+
+VERSION = "1.0.0"
+
+Gunakan version tersebut untuk:
+
+* GUI
+* logs
+* PyInstaller metadata
+* installer jika memungkinkan.
+
+Jangan hardcode version di banyak tempat.
+
+---
+
+# 50. README
+
+README harus menjelaskan:
+
+* project
+* features
+* requirements
+* development setup
+* project structure
+* build
+* packaging
+* installer
+* runtime dependencies
+* troubleshooting
+* license notices
+
+---
+
+# 51. LICENSE COMPLIANCE
+
+Aplikasi akan mendistribusikan third-party software.
+
+Jangan menganggap dependency open-source berarti bebas tanpa kewajiban.
+
+Buat:
+
+licenses/
+
+dan dokumentasikan:
+
+* scrcpy license
+* Android platform-tools / ADB license
+* Python dependency licenses
+* PyQt6 licensing implications
+
+Jangan mengklaim ownership atas third-party software.
+
+Jika license membutuhkan notice/redistribution text, sertakan.
+
+---
+
+# 52. RUNTIME FOLDER
+
+Developer akan menaruh dependency secara manual ke project.
+
+Expected:
+
+runtime/
+scrcpy/
+scrcpy.exe
+required DLL/files
+
+```
+adb/
+    adb.exe
+    AdbWinApi.dll
+    AdbWinUsbApi.dll
+```
+
+Aplikasi harus memvalidasi runtime.
+
+Jika scrcpy hilang:
+
+"Scrcpy runtime was not found."
+
+Jika ADB hilang:
+
+"ADB runtime was not found."
+
+Jangan crash.
+
+---
+
+# 53. DO NOT MODIFY USER SYSTEM
+
+Aplikasi tidak boleh secara default:
+
+* modify system PATH
+* modify registry unnecessarily
+* install ADB globally
+* install scrcpy globally
+* require Administrator
+* alter Android settings beyond what the selected ADB command requires.
+
+Semua dependency sebaiknya self-contained.
+
+---
+
+# 54. CODE QUALITY
+
+Gunakan:
+
+* meaningful names
+* type hints
+* docstrings untuk public classes/methods
+* small functions
+* separation of concern
+* exception handling
+* logging.
+
+Hindari:
+
+* giant functions
+* global mutable state
+* duplicated logic
+* magic strings
+* hardcoded paths
+* hidden subprocess behavior.
+
+---
+
+# 55. IMPORTANT RULE FOR AI CODING
+
+Jangan menghasilkan code hanya agar terlihat lengkap.
+
+Jika sebuah feature belum stabil:
+
+lebih baik:
+
+TODO yang jelas
+
+daripada:
+
+implementasi palsu yang terlihat bekerja tetapi sebenarnya broken.
+
+Jangan membuat fake functionality.
+
+Jangan membuat tombol yang tidak berfungsi.
+
+Jangan membuat checkbox yang tidak memengaruhi command.
+
+Setiap control GUI harus benar-benar terhubung ke backend.
+
+---
+
+# 56. DEVELOPMENT STRATEGY
+
+Setiap phase harus menghasilkan aplikasi yang masih dapat dijalankan.
+
+Contoh:
+
+Phase 1:
+GUI kosong tetapi architecture benar.
+
+Phase 2:
+GUI dapat mendeteksi device.
+
+Phase 3:
+GUI dapat menjalankan scrcpy.
+
+Phase 4:
+configuration lengkap.
+
+Phase 5:
+advanced features.
+
+Jangan menunggu sampai seluruh project selesai baru mencoba menjalankannya.
+
+---
+
+# 57. BEFORE WRITING CODE
+
+Sebelum membuat file:
+
+1. Analisis requirements.
+2. Buat architecture.
+3. Buat project tree.
+4. Identifikasi dependency.
+5. Identifikasi kemungkinan failure points.
+6. Buat implementation plan.
+7. Baru implementasikan.
+
+Jika ada keputusan architecture yang ambigu, pilih solusi paling sederhana dan maintainable.
+
+Jangan over-engineer.
+
+---
+
+# 58. AFTER EACH PHASE
+
+Setelah phase selesai:
+
+* jalankan application
+* cek import
+* cek syntax
+* cek runtime
+* cek GUI responsiveness
+* cek subprocess handling
+* cek error handling
+* cek architecture
+* cek unused code
+* cek duplicated code
+
+Perbaiki bug sebelum lanjut.
+
+---
+
+# 59. FINAL AUDIT
+
+Sebelum menyatakan project selesai, lakukan audit:
+
+[ ] Application starts
+[ ] GUI opens
+[ ] ADB detected
+[ ] No device handled
+[ ] Unauthorized handled
+[ ] Offline handled
+[ ] Multiple devices handled
+[ ] Device selection works
+[ ] Device information works
+[ ] Scrcpy starts
+[ ] Scrcpy stops
+[ ] Scrcpy failure handled
+[ ] Resolution works
+[ ] FPS works
+[ ] Bitrate works
+[ ] Audio works
+[ ] Fullscreen works
+[ ] Stay awake works
+[ ] Presets work
+[ ] Configuration persists
+[ ] Corrupt config handled
+[ ] Logs generated
+[ ] UI does not freeze
+[ ] No unnecessary admin requirement
+[ ] PyInstaller build works
+[ ] Runtime files included
+[ ] Inno Setup works
+[ ] Uninstaller works
+[ ] Version consistent
+[ ] License notices included
+
+---
+
+# 60. MOST IMPORTANT RULE
+
+Jangan mengejar jumlah fitur.
+
+Target utama:
+
+**Aplikasi yang benar-benar dapat digunakan.**
+
+Jika harus memilih antara:
+
+Feature A yang keren tetapi rawan bug
+
+versus
+
+Feature B yang sederhana tetapi stabil
+
+pilih:
+
+**Feature B.**
+
+---
+
+# FINAL PRODUCT VISION
+
+Hasil akhirnya harus terasa seperti:
+
+"GUI management utility untuk scrcpy"
+
+bukan:
+
+"terminal wrapper dengan beberapa tombol."
+
+User harus dapat:
+
+1. Install
+2. Open
+3. Connect Android
+4. Select device
+5. Choose configuration
+6. Click Start
+7. scrcpy langsung berjalan.
+
+Tanpa perlu membuka CMD.
+
+Tanpa perlu mengetik command.
+
+Tanpa perlu mengatur PATH.
+
+Tanpa perlu install scrcpy secara manual.
+
+Namun pengguna advanced tetap dapat mengakses:
+
+* advanced options
+* custom arguments
+* command preview
+* logs
+* diagnostics.
+
+Bangun aplikasi secara incremental, test setiap tahap, dan prioritaskan reliability di atas visual atau jumlah fitur.
+
+
+                    ┌─────────────────┐
+                    │  Launch App     │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Load Config     │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Check Runtime   │
+                    │ ADB / Scrcpy    │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Start ADB       │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Scan Devices    │
+                    └────────┬────────┘
+                             ↓
+               ┌─────────────┴─────────────┐
+               ↓                           ↓
+        Device Found                 No Device
+               │                           │
+               ↓                           ↓
+       Populate Device List       Show "No Device"
+               │                           │
+               ↓                           │
+       User Select Device                 │
+               │                           │
+               └─────────────┬─────────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Configure       │
+                    │ Scrcpy          │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Validate Config │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Build Command   │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Launch Scrcpy   │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Monitor Process │
+                    └────────┬────────┘
+                             ↓
+                    ┌─────────────────┐
+                    │ Scrcpy Running  │
+                    └────────┬────────┘
+                             ↓
+                       User closes
+                             ↓
+                    ┌─────────────────┐
+                    │ Update Status   │
+                    │ → Ready         │
+                    └─────────────────┘
+
+
+
+nanti untuk icon nya saya taruh di /LogoAplikasi/icon.png 
+icon ini berguna untuk pyinstaller dan inno setup dan icon aplikasi
+
+
+
+
+
