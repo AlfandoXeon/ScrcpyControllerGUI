@@ -12,6 +12,7 @@
 #define MyAppURL "https://github.com/AlfandoXeon/ScrcpyControllerGUI"
 #define MyAppExeName "ScrcpyController.exe"
 #define MyDistDir "dist\ScrcpyController"
+#define MyOutputBaseFilename "XeonScrcpyController_Setup_v" + MyAppVersion
 
 [Setup]
 ; Unique application GUID
@@ -39,7 +40,7 @@ PrivilegesRequiredOverridesAllowed=dialog
 
 ; Output configuration
 OutputDir=installer
-OutputBaseFilename=XeonScrcpyController_Setup_v{#MyAppVersion}
+OutputBaseFilename={#MyOutputBaseFilename}
 SetupIconFile=app\resources\icon.ico
 UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
@@ -51,7 +52,7 @@ VersionInfoVersion={#MyAppVersion}.0
 VersionInfoCopyright=Copyright (C) 2026 {#MyAppPublisher}
 VersionInfoProductName={#MyAppName}
 VersionInfoProductVersion={#MyAppVersion}
-VersionInfoOriginalFileName={#OutputBaseFilename}.exe
+VersionInfoOriginalFileName={#MyOutputBaseFilename}.exe
 
 ; Code Signing Integration (Inno Setup SignTool)
 ; When a certificate is configured in Inno Setup (Tools -> Configure Sign Tools),
