@@ -6,6 +6,7 @@ Does NOT kill all scrcpy.exe processes system-wide.
 """
 
 import os
+import sys
 import subprocess
 from pathlib import Path
 from typing import Optional
@@ -135,11 +136,21 @@ class ScrcpyService(QObject):
             scrcpy_dir_str = str(paths.scrcpy_dir)
             env["PATH"] = f"{adb_dir_str};{scrcpy_dir_str};{env.get('PATH', '')}"
 
+            # Hide the black console window on Windows while keeping SDL3 mirror window active
+            creationflags = 0
+            startupinfo = None
+            if sys.platform == "win32":
+                creationflags = subprocess.CREATE_NO_WINDOW
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = 0  # SW_HIDE
+
             self._process = subprocess.Popen(
                 args,
                 cwd=str(paths.scrcpy_dir),
                 env=env,
-                # Do NOT use CREATE_NO_WINDOW: scrcpy creates a GUI display window.
+                creationflags=creationflags,
+                startupinfo=startupinfo,
                 # Capture stdout and stderr to monitor logs without buffer deadlocks.
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
