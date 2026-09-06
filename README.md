@@ -1,6 +1,47 @@
-# Xeon - Scrcpy Controller GUI
+<p align="center">
+  <img src="app/resources/icon.png" width="128" height="128" alt="Xeon Scrcpy Controller Logo" />
+</p>
 
-A modern, high-performance desktop controller and graphic interface for Android device mirroring, camera streaming, OTG input passthrough, and advanced ADB management. Built with Python 3.12 and PyQt6, powered by Genymobile Scrcpy and the Android Debug Bridge (ADB).
+<h1 align="center">Xeon - Scrcpy Controller GUI</h1>
+
+<p align="center">
+  A modern, high-performance desktop controller and graphical interface for Android device mirroring, camera streaming, OTG input passthrough, and advanced ADB management. Built with Python 3.12 and PyQt6, powered by Genymobile Scrcpy and the Android Debug Bridge (ADB).
+</p>
+
+<p align="center">
+  <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe">
+    <img src="https://img.shields.io/badge/Download-Windows%20Installer%20(v1.0.0)-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Installer" />
+  </a>
+</p>
+
+---
+
+## Download & Installation
+
+The official release provides a standalone, pre-packaged Windows 64-bit installer with bundled portable runtimes (Scrcpy v4.1 and ADB Platform Tools). No prior Python or manual dependency configuration is required for end users.
+
+- **Direct Download Link:** [XeonScrcpyController_Setup_v1.0.0.exe](https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe)
+- **Target OS:** Windows 10 / Windows 11 (64-bit)
+- **Package Release:** v1.0.0
+
+---
+
+## Screenshots
+
+### Device Mirroring Session
+High-definition, low-latency Android display mirroring displayed alongside the real-time application controller and diagnostic log viewer.
+
+![Device Mirroring Session](Screnshoot/mirroring_session.png)
+
+### Device Management & Live Application Diagnostics
+Inspect connected devices, transport states, wireless ADB pairing, and real-time color-coded diagnostic logs.
+
+![Device Management and Diagnostics](Screnshoot/device_overview.png)
+
+### Quick Tools, Power Controls & Interactive ADB Shell
+Hardware key emulation, direct screenshot capture, power cycling (System, Recovery, Fastboot), and an embedded interactive ADB shell terminal.
+
+![Tools and Power Controls](Screnshoot/tools_features.png)
 
 ---
 
@@ -80,7 +121,7 @@ The application follows a structured Model-View-Controller (MVC) architecture de
 
 ### Host Environment
 - Windows 10 or Windows 11 (64-bit)
-- Python 3.10, 3.11, or 3.12 (Python 3.12 recommended)
+- Python 3.10, 3.11, or 3.12 (Python 3.12 recommended for source execution)
 - Bundled runtime dependencies: Genymobile Scrcpy v4.1 and Android Platform Tools (ADB)
 
 ### Android Device
@@ -89,7 +130,7 @@ The application follows a structured Model-View-Controller (MVC) architecture de
 
 ---
 
-## Installation & Setup
+## Installation & Setup from Source
 
 ### 1. Clone Repository
 ```bash
