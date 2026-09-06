@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xeon - Scrcpy Controller GUI | Desktop Controller for Android Mirroring & ADB</title>
+  <meta name="description" content="A clean, high-performance desktop graphical controller for Android device mirroring, camera streaming, OTG input passthrough, and ADB management." />
+  <meta name="theme-color" content="#0b0f17" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="icon.png" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            app: {
+              bg: '#0b0f17',
+              surface: '#111726',
+              surfaceElevated: '#172033',
+              border: '#1e293b',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              accent: '#38bdf8'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- AOS (Animate On Scroll) CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-[#0b0f17] text-slate-200 antialiased overflow-x-hidden selection:bg-blue-600 selection:text-white">
+
+  <!-- Minimal Header / Navigation Bar -->
+  <header class="fixed top-0 left-0 right-0 z-50 navbar-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#hero" class="flex items-center gap-3">
+        <img src="icon.png" alt="Xeon Scrcpy Controller Logo" class="w-8 h-8 rounded-lg object-contain" />
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold text-white tracking-tight">Xeon Scrcpy Controller</span>
+          <span class="hidden sm:inline-block px-2 py-0.5 text-[11px] font-mono bg-slate-800 text-slate-300 rounded border border-slate-700">
+            v1.0.0
+          </span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-7 text-xs font-medium text-slate-400">
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#screenshots" class="hover:text-white transition-colors">Screenshots</a>
+        <a href="#documentation" class="hover:text-white transition-colors">Documentation</a>
+        <a href="#releases" class="hover:text-white transition-colors">Releases</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+        <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI" target="_blank" rel="noopener noreferrer" class="app-github-link hover:text-white flex items-center gap-1.5 transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </nav>
+
+      <!-- Primary Action -->
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe" class="app-download-link inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors">
+          <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          <span>Download Installer</span>
+        </a>
+      </div>
+
+      <!-- Mobile Button -->
+      <button id="mobile-menu-btn" aria-label="Toggle Menu" class="md:hidden p-2 text-slate-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden px-4 py-4 bg-[#111726] border-b border-slate-800">
+      <div class="flex flex-col gap-2 text-xs">
+        <a href="#features" class="py-2 text-slate-300 hover:text-white">Features</a>
+        <a href="#screenshots" class="py-2 text-slate-300 hover:text-white">Screenshots</a>
+        <a href="#documentation" class="py-2 text-slate-300 hover:text-white">Documentation</a>
+        <a href="#releases" class="py-2 text-slate-300 hover:text-white">Releases</a>
+        <a href="#faq" class="py-2 text-slate-300 hover:text-white">FAQ</a>
+        <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI" target="_blank" rel="noopener noreferrer" class="app-github-link py-2 text-slate-300 hover:text-white">GitHub Repository</a>
+        <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe" class="app-download-link text-center mt-2 py-2.5 rounded-lg bg-blue-600 text-white font-medium">
+          Download Windows Installer (<span class="app-latest-version">v1.0.0</span>)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24">
+
+    <!-- ELEGANT HERO SECTION -->
+    <section id="hero" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 lg:pt-16 lg:pb-28">
+      <div class="text-center max-w-3xl mx-auto mb-12" data-aos="fade-up">
+        
+        <!-- Subtle Release Pill -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>Version <strong class="app-latest-version">v1.0.0</strong> Released</span>
+          <span class="text-slate-600">/</span>
+          <span class="text-slate-400">Windows 64-bit Installer</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight mb-5">
+          A refined desktop controller for Android screen mirroring & ADB
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto mb-8 font-normal">
+          High-framerate video streaming, low-latency audio capture, dedicated camera mode, kernel UHID input, and direct ADB diagnostics in a clean, unified application with zero background command prompts.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe" class="app-download-link inline-flex items-center px-6 py-3 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>Download for Windows (<span class="app-latest-size">56.4 MB</span>)</span>
+          </a>
+
+          <a href="#documentation" class="inline-flex items-center px-5 py-3 rounded-lg text-sm font-medium text-slate-300 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 transition-colors">
+            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <span>Documentation</span>
+          </a>
+
+          <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI" target="_blank" rel="noopener noreferrer" class="app-github-link inline-flex items-center px-5 py-3 rounded-lg text-sm font-medium text-slate-300 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 transition-colors">
+            <svg class="w-4 h-4 mr-2 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+            </svg>
+            <span>GitHub</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Hero Visual Showcase: Clean Desktop Window Frame -->
+      <div class="max-w-5xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-[#111726] shadow-2xl">
+          
+          <!-- Window Titlebar Mockup -->
+          <div class="px-4 py-3 bg-[#0d131f] border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-slate-700"></span>
+              <span class="w-3 h-3 rounded-full bg-slate-700"></span>
+              <span class="w-3 h-3 rounded-full bg-slate-700"></span>
+              <span class="ml-2 text-xs font-mono text-slate-400">Xeon - Scrcpy Controller v1.0.0</span>
+            </div>
+            <div class="text-[11px] font-mono text-slate-500">
+              Direct3D 11 Renderer • Clean Native Process
+            </div>
+          </div>
+
+          <!-- Active Mirroring Image -->
+          <div class="p-2 sm:p-4 bg-[#080c14]">
+            <img src="Screnshoot/mirroring_session.png" alt="Xeon Scrcpy Controller Running Session" class="w-full h-auto rounded-lg object-contain shadow-inner border border-slate-800/80 cursor-pointer zoomable-image" />
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY HIGHLIGHTS BAR -->
+    <section class="border-y border-slate-800/80 bg-[#0e1420] py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          
+          <div class="flex flex-col">
+            <span class="text-2xl sm:text-3xl font-bold text-white font-mono">&lt; 35ms</span>
+            <span class="text-xs font-medium text-slate-400 mt-1">Ultra-Low Video Latency</span>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-2xl sm:text-3xl font-bold text-white font-mono">120 FPS</span>
+            <span class="text-xs font-medium text-slate-400 mt-1">High Refresh Rate Support</span>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-2xl sm:text-3xl font-bold text-white font-mono">Kernel UHID</span>
+            <span class="text-xs font-medium text-slate-400 mt-1">Hardware OTG Simulation</span>
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-2xl sm:text-3xl font-bold text-white font-mono">Zero CMD</span>
+            <span class="text-xs font-medium text-slate-400 mt-1">Clean Windows API Process</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREENSHOTS GALLERY -->
+    <section id="screenshots" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
+        <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-medium">Interface</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Application Screenshots</h2>
+        <p class="text-slate-400 text-xs sm:text-sm mt-2">
+          High-resolution captures from real-world execution on Windows 11. Click any screenshot to enlarge.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Screenshot 1 -->
+        <div class="card-elegant rounded-xl p-3 flex flex-col justify-between" data-aos="fade-up" data-aos-delay="50">
+          <div>
+            <div class="overflow-hidden rounded-lg bg-slate-950 aspect-[16/10] mb-3 cursor-pointer">
+              <img src="Screnshoot/mirroring_session.png" alt="Device Mirroring with Scrcpy" class="zoomable-image w-full h-full object-cover object-top hover:scale-[1.02] transition-transform duration-300" />
+            </div>
+            <h3 class="text-sm font-semibold text-white">Live Mirroring Session</h3>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              Real-time screen projection alongside the GUI controller and active status indicators.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] font-mono text-slate-500">
+            Direct3D 11 Display
+          </div>
+        </div>
+
+        <!-- Screenshot 2 -->
+        <div class="card-elegant rounded-xl p-3 flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
+          <div>
+            <div class="overflow-hidden rounded-lg bg-slate-950 aspect-[16/10] mb-3 cursor-pointer">
+              <img src="Screnshoot/device_overview.png" alt="Device Diagnostics & Log Viewer" class="zoomable-image w-full h-full object-cover object-top hover:scale-[1.02] transition-transform duration-300" />
+            </div>
+            <h3 class="text-sm font-semibold text-white">Device & Diagnostics</h3>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              Connected device management, wireless pairing, and color-coded runtime log stream.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] font-mono text-slate-500">
+            Live Stream Log Viewer
+          </div>
+        </div>
+
+        <!-- Screenshot 3 -->
+        <div class="card-elegant rounded-xl p-3 flex flex-col justify-between" data-aos="fade-up" data-aos-delay="150">
+          <div>
+            <div class="overflow-hidden rounded-lg bg-slate-950 aspect-[16/10] mb-3 cursor-pointer">
+              <img src="Screnshoot/tools_features.png" alt="Tools & Interactive ADB Shell" class="zoomable-image w-full h-full object-cover object-top hover:scale-[1.02] transition-transform duration-300" />
+            </div>
+            <h3 class="text-sm font-semibold text-white">Tools & ADB Terminal</h3>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              Hardware key emulation, remote reboot triggers (Recovery/Fastboot), and embedded ADB shell.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] font-mono text-slate-500">
+            Interactive Shell Access
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CORE FEATURES SECTION -->
+    <section id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800">
+      <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
+        <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-medium">Core Architecture</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Feature Breakdown</h2>
+        <p class="text-slate-400 text-xs sm:text-sm mt-2">
+          Designed for developers, gamers, and productivity power users who need reliable Android device control.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="card-elegant rounded-xl p-5" data-aos="fade-up" data-aos-delay="50">
+          <div class="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-400 mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Display Mirroring Engine</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Granular video resolution bounds, framerates up to 120 FPS, and bitrates up to 64 Mbps. Supports H.264, H.265 (HEVC), and AV1 video codecs with hardware encoder selection.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card-elegant rounded-xl p-5" data-aos="fade-up" data-aos-delay="100">
+          <div class="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-400 mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Audio Forwarding & Duplicate</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Streams Android system audio directly through PC audio devices without auxiliary cables. Supports OPUS, AAC, FLAC, and uncompressed RAW PCM streams with audio duplicate mode.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card-elegant rounded-xl p-5" data-aos="fade-up" data-aos-delay="150">
+          <div class="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-400 mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Dedicated Camera Mode</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Turn your Android device into a high-definition webcam for streaming or meetings. Streams front or rear camera sensors directly without mirroring the display.
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="card-elegant rounded-xl p-5" data-aos="fade-up" data-aos-delay="200">
+          <div class="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-400 mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Hardware OTG Passthrough</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Simulates physical USB keyboard and mouse hardware using Linux kernel UHID drivers. Operates without display rendering and bypasses OEM software input blocks.
+          </p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="card-elegant rounded-xl p-5" data-aos="fade-up" data-aos-delay="250">
+          <div class="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-400 mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">ADB Power & Recovery Tools</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Power cycle devices safely. Reboot directly into Android System, Stock/Custom Recovery mode, or Fastboot/Bootloader mode with interactive confirmation prompts.
+          </p>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="card-elegant rounded-xl p-5" data-aos="fade-up" data-aos-delay="300">
+          <div class="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-400 mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Interactive ADB Shell Terminal</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Embedded PyQt terminal with security prompt gate, asynchronous process streaming, Up/Down command history, and instant system inspection chips.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DOCUMENTATION SECTION -->
+    <section id="documentation" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800">
+      <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
+        <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-medium">Documentation</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Technical Reference & Guides</h2>
+        <p class="text-slate-400 text-xs sm:text-sm mt-2">
+          Comprehensive guides covering setup, audio configuration, OEM permission fixes, and hotkeys.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Sidebar Navigation -->
+        <div class="lg:col-span-4 card-elegant rounded-xl p-3 sticky top-24">
+          <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 px-3 py-2 font-medium">
+            Topics Index
+          </div>
+          <div class="flex flex-col gap-1 mt-1">
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors bg-blue-600/10 text-blue-400 border border-blue-600/30" data-target="doc-prerequisites">
+              1. Prerequisites & USB Setup
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-mirroring">
+              2. Screen Mirroring Parameters
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-audio">
+              3. Audio Forwarding Setup
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-camera">
+              4. Camera Streaming Mode
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-otg">
+              5. Hardware OTG Mode
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-power">
+              6. Power & Recovery Guide
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-terminal">
+              7. Interactive ADB Shell
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-oem">
+              8. Xiaomi / HyperOS Permission Fix
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-source">
+              9. Building from Source
+            </button>
+            <button class="doc-nav-btn text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors text-slate-400 border border-transparent hover:text-white hover:bg-slate-800" data-target="doc-shortcuts">
+              10. Keyboard Shortcuts Reference
+            </button>
+          </div>
+        </div>
+
+        <!-- Documentation Content Body -->
+        <div class="lg:col-span-8 card-elegant rounded-xl p-6 sm:p-8 doc-content min-h-[480px]">
+          
+          <!-- DOC 1 -->
+          <div id="doc-prerequisites" class="doc-panel">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 01</div>
+            <h2 class="text-xl font-bold text-white mb-3">Prerequisites & Android USB Setup</h2>
+            <p>
+              Xeon Scrcpy Controller uses the Android Debug Bridge (ADB) to manage and mirror connected hardware. Ensure USB Debugging is authorized on your target device before starting.
+            </p>
+            <h3>Enabling USB Debugging</h3>
+            <ul>
+              <li>Open <code>Settings</code> &gt; <code>About Phone</code> on your Android device.</li>
+              <li>Tap <code>Build Number</code> repeatedly (7 times) until the prompt confirms developer mode is unlocked.</li>
+              <li>Navigate to <code>Settings</code> &gt; <code>System</code> &gt; <code>Developer Options</code>.</li>
+              <li>Enable the <strong>USB Debugging</strong> toggle.</li>
+              <li>Connect your device via USB cable and select <strong>Always allow from this computer</strong> on the authorization prompt.</li>
+            </ul>
+            <h3>Wireless TCP/IP Pairing</h3>
+            <p>
+              To run without a physical cable over local Wi-Fi, click the <strong>Wireless ADB</strong> button in the application, or execute:
+            </p>
+            <pre><code id="code-wireless">adb tcpip 5555
+adb connect &lt;DEVICE_IP_ADDRESS&gt;:5555</code></pre>
+            <div class="flex justify-end mb-4">
+              <button class="copy-code-btn px-2.5 py-1 rounded bg-slate-800 text-[11px] text-slate-300 font-mono hover:bg-slate-700" data-clipboard-target="#code-wireless">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- DOC 2 -->
+          <div id="doc-mirroring" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 02</div>
+            <h2 class="text-xl font-bold text-white mb-3">Screen Mirroring Parameters</h2>
+            <p>
+              The display panel exposes core parameters used by the hardware video encoder on your Android device.
+            </p>
+            <h3>Video Codecs</h3>
+            <ul>
+              <li><strong>H.264 (AVC):</strong> Universal compatibility across all Android 5.0+ devices.</li>
+              <li><strong>H.265 (HEVC):</strong> Offers approximately 40% higher compression efficiency. Best suited for high-resolution displays or wireless Wi-Fi streaming.</li>
+              <li><strong>AV1:</strong> Next-generation open video format supported by modern processors (Snapdragon 8 Gen 2+, Dimensity 9200+, Tensor G3+).</li>
+            </ul>
+            <h3>Tuning Limits</h3>
+            <ul>
+              <li><strong>Max Resolution:</strong> Caps the longest dimension (e.g. 1920 or 1280) to decrease USB bus load.</li>
+              <li><strong>Max Framerate:</strong> Options from 30 up to 120 FPS.</li>
+              <li><strong>Bitrate:</strong> Values between <code>8M</code> and <code>16M</code> offer an ideal balance of visual fidelity and low latency.</li>
+            </ul>
+          </div>
+
+          <!-- DOC 3 -->
+          <div id="doc-audio" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 03</div>
+            <h2 class="text-xl font-bold text-white mb-3">Audio Forwarding Setup</h2>
+            <p>
+              Capture internal audio directly from Android 11+ devices and forward it to PC speakers or headphones.
+            </p>
+            <h3>Supported Codecs</h3>
+            <ul>
+              <li><strong>OPUS:</strong> Default high-fidelity, low-latency audio codec.</li>
+              <li><strong>AAC:</strong> Standard MPEG-4 audio profile with broad platform compatibility.</li>
+              <li><strong>FLAC:</strong> Lossless audio compression for sound verification.</li>
+              <li><strong>RAW:</strong> Uncompressed PCM audio stream.</li>
+            </ul>
+            <h3>Audio Duplicate</h3>
+            <p>
+              Enabling <code>--audio-dup</code> plays audio on both the host computer and the phone simultaneously.
+            </p>
+          </div>
+
+          <!-- DOC 4 -->
+          <div id="doc-camera" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 04</div>
+            <h2 class="text-xl font-bold text-white mb-3">Dedicated Camera Mode</h2>
+            <p>
+              Turn an Android phone into a high-definition webcam for streaming applications (such as OBS Studio) or video calls without mirroring the screen.
+            </p>
+            <h3>Configuration Options</h3>
+            <ul>
+              <li><strong>Camera Facing:</strong> Toggle between front selfie camera and rear camera modules.</li>
+              <li><strong>Custom Resolution:</strong> Force specific aspect ratios and resolutions (e.g. 1920x1080).</li>
+              <li><strong>High Speed Capture:</strong> Enable 60 FPS or 120 FPS high framerate camera feeds where supported by sensor hardware.</li>
+            </ul>
+          </div>
+
+          <!-- DOC 5 -->
+          <div id="doc-otg" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 05</div>
+            <h2 class="text-xl font-bold text-white mb-3">Hardware OTG Simulation Mode</h2>
+            <p>
+              OTG mode configures your host computer as a physical USB Human Interface Device (HID) connected to the phone.
+            </p>
+            <h3>Key Advantages</h3>
+            <ul>
+              <li><strong>Zero Battery & Screen Overhead:</strong> Video encoding is completely bypassed, keeping device temperatures and battery usage minimal.</li>
+              <li><strong>Linux UHID Driver:</strong> Operates at kernel level, bypassing Android OEM accessibility restrictions.</li>
+              <li><strong>Zero Latency:</strong> Input events register as genuine hardware keystrokes and mouse movements.</li>
+            </ul>
+          </div>
+
+          <!-- DOC 6 -->
+          <div id="doc-power" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 06</div>
+            <h2 class="text-xl font-bold text-white mb-3">Device Power & Recovery Management</h2>
+            <p>
+              The Tools panel provides direct reboot triggers for maintenance and debugging workflows.
+            </p>
+            <h3>Reboot Actions</h3>
+            <ul>
+              <li><strong>Reboot System:</strong> Standard warm operating system reboot.</li>
+              <li><strong>Reboot Recovery:</strong> Direct transition into the recovery partition (stock or custom recovery).</li>
+              <li><strong>Reboot Bootloader / Fastboot:</strong> Enters Fastboot mode for device maintenance or ROM flashing.</li>
+            </ul>
+            <h3>Handling Recovery Mode Safely</h3>
+            <p>
+              When a device is in recovery mode, Android records a boot instruction on the <code>misc</code> partition (Bootloader Control Block). If you force-power-off during recovery, the bootloader will run a filesystem consistency check (<code>fsck</code>) on subsequent boot, making the boot logo display longer than normal. To exit recovery safely, always use the Volume keys to select <strong>"Reboot system now"</strong> and press the Power key.
+            </p>
+          </div>
+
+          <!-- DOC 7 -->
+          <div id="doc-terminal" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 07</div>
+            <h2 class="text-xl font-bold text-white mb-3">Interactive ADB Shell Terminal</h2>
+            <p>
+              An integrated PyQt command prompt for executing raw ADB shell commands with asynchronous output streaming.
+            </p>
+            <h3>Safety Confirmation</h3>
+            <p>
+              Because raw shell access provides complete control over the device, an interactive confirmation dialog is displayed before starting a session.
+            </p>
+            <h3>Diagnostic Quick Chips</h3>
+            <ul>
+              <li><code>pm list packages -3</code>: List all user-installed applications.</li>
+              <li><code>getprop</code>: Inspect device properties and Android OS build info.</li>
+              <li><code>df -h</code>: Check mounted storage usage and free disk space.</li>
+              <li><code>dumpsys battery</code>: Inspect battery percentage and charging health.</li>
+            </ul>
+          </div>
+
+          <!-- DOC 8 -->
+          <div id="doc-oem" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 08</div>
+            <h2 class="text-xl font-bold text-white mb-3">Xiaomi / HyperOS / MIUI Setup</h2>
+            <p>
+              Xiaomi devices running MIUI or HyperOS enforce an extra security restriction on software input event injection.
+            </p>
+            <h3>Fixing the INJECT_EVENTS Permission</h3>
+            <ul>
+              <li>Navigate to <code>Settings</code> &gt; <code>Additional Settings</code> &gt; <code>Developer Options</code>.</li>
+              <li>Locate <strong>USB Debugging (Security Settings)</strong> below the main USB Debugging switch.</li>
+              <li>Turn it on and confirm the prompt (requires active SIM card and logged-in Mi Account).</li>
+            </ul>
+            <p>
+              Alternatively, switch to <strong>OTG Mode</strong> in Xeon Scrcpy Controller. OTG Mode uses hardware simulation and does not require this setting.
+            </p>
+          </div>
+
+          <!-- DOC 9 -->
+          <div id="doc-source" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 09</div>
+            <h2 class="text-xl font-bold text-white mb-3">Building from Source & Packaging</h2>
+            <p>
+              The repository contains full automated build scripts for Windows 10 and 11:
+            </p>
+            <pre><code id="code-build"># 1. Clone the repository
+git clone https://github.com/AlfandoXeon/ScrcpyControllerGUI.git
+cd ScrcpyControllerGUI
+
+# 2. Setup virtual environment
+python -m venv .venv
+.venv\Scripts\activate
+
+# 3. Install dependencies & run
+pip install -r requirements.txt
+python app/main.py
+
+# 4. Compile standalone onedir executable
+build.bat</code></pre>
+            <div class="flex justify-end mb-4">
+              <button class="copy-code-btn px-2.5 py-1 rounded bg-slate-800 text-[11px] text-slate-300 font-mono hover:bg-slate-700" data-clipboard-target="#code-build">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- DOC 10 -->
+          <div id="doc-shortcuts" class="doc-panel hidden">
+            <div class="text-[11px] font-mono text-slate-500 mb-1">Section 10</div>
+            <h2 class="text-xl font-bold text-white mb-3">Keyboard Shortcuts & Scrcpy Mod-Keys</h2>
+            <p>
+              During an active mirroring session, Scrcpy supports keyboard shortcuts using the MOD key (default: <code>Left Alt</code> or <code>Left Super</code>).
+            </p>
+            <div class="overflow-x-auto my-4">
+              <table class="w-full text-left text-xs text-slate-300 border border-slate-800 rounded-lg overflow-hidden">
+                <thead class="bg-[#0d131f] text-slate-400 font-mono uppercase text-[11px]">
+                  <tr>
+                    <th class="p-2.5 border-b border-slate-800">Shortcut</th>
+                    <th class="p-2.5 border-b border-slate-800">Function</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 font-mono">
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + f</td>
+                    <td class="p-2.5 font-sans">Toggle Fullscreen Mode</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + h</td>
+                    <td class="p-2.5 font-sans">Trigger Home Button</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + b / Backspace</td>
+                    <td class="p-2.5 font-sans">Trigger Back Button</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + s</td>
+                    <td class="p-2.5 font-sans">Open Task Switcher (Recent Apps)</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + p</td>
+                    <td class="p-2.5 font-sans">Power Button / Screen Lock</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + Up / Down</td>
+                    <td class="p-2.5 font-sans">Adjust Volume Up / Down</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 text-blue-400">MOD + r</td>
+                    <td class="p-2.5 font-sans">Rotate Display Orientation 90°</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RELEASES & DOWNLOADS SECTION -->
+    <section id="releases" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800">
+      <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
+        <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-medium">Distribution</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Download & Version Releases</h2>
+        <p class="text-slate-400 text-xs sm:text-sm mt-2">
+          Signed 64-bit Windows installer with bundled portable runtimes (Scrcpy v4.1 & ADB Platform Tools).
+        </p>
+      </div>
+
+      <!-- Releases Container (Loaded dynamically from config.json) -->
+      <div id="versions-container" class="space-y-4 max-w-4xl mx-auto" data-aos="fade-up">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- System Requirements Matrix -->
+      <div class="mt-10 card-elegant rounded-xl p-5 max-w-4xl mx-auto" data-aos="fade-up">
+        <h3 class="text-sm font-semibold text-white mb-3">System Requirements</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+          <div class="p-3 bg-[#0d131f] rounded border border-slate-800">
+            <span class="text-slate-500 block">Host OS</span>
+            <span class="text-slate-200">Windows 10 / 11 (64-bit)</span>
+          </div>
+          <div class="p-3 bg-[#0d131f] rounded border border-slate-800">
+            <span class="text-slate-500 block">Architecture</span>
+            <span class="text-slate-200">x64 (AMD64 / Intel)</span>
+          </div>
+          <div class="p-3 bg-[#0d131f] rounded border border-slate-800">
+            <span class="text-slate-500 block">Android</span>
+            <span class="text-slate-200">Android 5.0 to 16+</span>
+          </div>
+          <div class="p-3 bg-[#0d131f] rounded border border-slate-800">
+            <span class="text-slate-500 block">Connection</span>
+            <span class="text-slate-200">USB 2.0+ or Wi-Fi</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800">
+      <div class="text-center mb-12" data-aos="fade-up">
+        <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-medium">FAQ</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="space-y-3" data-aos="fade-up">
+        
+        <div class="card-elegant rounded-lg overflow-hidden">
+          <button class="faq-trigger w-full px-5 py-4 text-left flex items-center justify-between text-xs sm:text-sm font-medium text-white hover:text-blue-400 transition-colors">
+            <span>Do I need to install Python or ADB separately?</span>
+            <svg class="faq-arrow w-4 h-4 text-slate-400 transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="hidden px-5 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800 pt-3">
+            No. The official Windows installer package contains the full runtime stack: isolated Python runtime, Genymobile Scrcpy v4.1, Android Platform Tools (ADB), FFmpeg decoding libraries, and SDL3 Direct3D binaries. Everything is portable and pre-configured.
+          </div>
+        </div>
+
+        <div class="card-elegant rounded-lg overflow-hidden">
+          <button class="faq-trigger w-full px-5 py-4 text-left flex items-center justify-between text-xs sm:text-sm font-medium text-white hover:text-blue-400 transition-colors">
+            <span>Why did previous Scrcpy scripts spawn a black command prompt window?</span>
+            <svg class="faq-arrow w-4 h-4 text-slate-400 transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="hidden px-5 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800 pt-3">
+            <code>scrcpy.exe</code> is compiled as a Console User Interface (CUI) binary. By default, Windows allocates a console window when it launches. Xeon Scrcpy Controller explicitly suppresses this behavior using the Windows API flags <code>CREATE_NO_WINDOW (0x08000000)</code> and <code>STARTUPINFO.wShowWindow = 0 (SW_HIDE)</code>, ensuring zero background command prompt pop-ups while preserving the hardware-accelerated video rendering window.
+          </div>
+        </div>
+
+        <div class="card-elegant rounded-lg overflow-hidden">
+          <button class="faq-trigger w-full px-5 py-4 text-left flex items-center justify-between text-xs sm:text-sm font-medium text-white hover:text-blue-400 transition-colors">
+            <span>Why does mouse clicking or keyboard input fail on Xiaomi / HyperOS?</span>
+            <svg class="faq-arrow w-4 h-4 text-slate-400 transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="hidden px-5 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800 pt-3">
+            Xiaomi imposes an extra layer of proprietary security on Android input injection. You must enable <strong>USB Debugging (Security Settings)</strong> inside Developer Options. Alternatively, use Xeon Scrcpy Controller's <strong>OTG Mode</strong>, which simulates genuine hardware keystrokes directly through the Linux kernel UHID interface without requiring input event injection permissions.
+          </div>
+        </div>
+
+        <div class="card-elegant rounded-lg overflow-hidden">
+          <button class="faq-trigger w-full px-5 py-4 text-left flex items-center justify-between text-xs sm:text-sm font-medium text-white hover:text-blue-400 transition-colors">
+            <span>Can I mirror devices completely wirelessly without a USB cable?</span>
+            <svg class="faq-arrow w-4 h-4 text-slate-400 transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="hidden px-5 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800 pt-3">
+            Yes. Once you connect your device via USB cable once and enable TCP/IP listening via the <strong>Wireless ADB</strong> button, you can unplug the USB cable and stream over your local 5GHz Wi-Fi network at full framerate.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MINIMAL UNDERSTATED FOOTER -->
+  <footer class="border-t border-slate-800 bg-[#080c14] py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-2.5">
+        <img src="icon.png" alt="Xeon Scrcpy Controller" class="w-6 h-6 rounded object-contain" />
+        <span class="text-xs font-semibold text-white">Xeon - Scrcpy Controller GUI</span>
+        <span class="text-slate-600">/</span>
+        <span class="text-xs text-slate-400">Created by AlfandoXeon • MIT License</span>
+      </div>
+
+      <div class="flex items-center gap-5 text-xs text-slate-400">
+        <a href="#hero" class="hover:text-white transition-colors">Top</a>
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#documentation" class="hover:text-white transition-colors">Docs</a>
+        <a href="#releases" class="hover:text-white transition-colors">Releases</a>
+        <a href="https://github.com/AlfandoXeon/ScrcpyControllerGUI" target="_blank" rel="noopener noreferrer" class="app-github-link hover:text-white transition-colors">GitHub</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX MODAL -->
+  <div id="lightbox-modal" class="lightbox-modal fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+    <div class="lightbox-backdrop absolute inset-0 bg-black/90 backdrop-blur-sm"></div>
+    <div class="relative z-10 max-w-5xl max-h-[90vh] flex flex-col items-center">
+      <div class="w-full flex items-center justify-between pb-3 text-xs text-slate-300 font-mono">
+        <span id="lightbox-caption" class="text-slate-200"></span>
+        <button id="lightbox-close" class="px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition-colors">
+          Close (Esc)
+        </button>
+      </div>
+      <img id="lightbox-image" src="" alt="" class="max-h-[82vh] w-auto rounded-lg border border-slate-800 object-contain bg-[#080c14]" />
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

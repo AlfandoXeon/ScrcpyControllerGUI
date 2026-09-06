@@ -1,0 +1,40 @@
+{
+  "appName": "Xeon - Scrcpy Controller GUI",
+  "tagline": "Modern Desktop Interface for High-Performance Android Mirroring & ADB Control",
+  "appDescription": "Advanced, production-grade desktop graphical interface for Genymobile Scrcpy and Android Debug Bridge. Features low-latency video streaming, audio forwarding, dedicated camera mode, hardware OTG simulation, embedded interactive ADB shell, and device recovery management.",
+  "githubRepo": "https://github.com/AlfandoXeon/ScrcpyControllerGUI",
+  "githubReleases": "https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases",
+  "latestVersion": "v1.0.0",
+  "latestDownloadUrl": "https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe",
+  "latestReleaseDate": "September 6, 2026",
+  "latestFileSize": "56.4 MB",
+  "supportedOS": "Windows 10 / Windows 11 (64-bit)",
+  "systemRequirements": {
+    "os": "Windows 10 / 11 (64-bit)",
+    "architecture": "x64 / AMD64",
+    "android": "Android 5.0 (Lollipop) or newer (Android 11+ recommended for wireless pairing)",
+    "connection": "USB 2.0 / 3.0 or Local Wi-Fi network with ADB enabled"
+  },
+  "versions": [
+    {
+      "version": "v1.0.0",
+      "releaseDate": "September 6, 2026",
+      "isLatest": true,
+      "tag": "v1.0.0",
+      "title": "Initial Official Production Release",
+      "downloadUrl": "https://github.com/AlfandoXeon/ScrcpyControllerGUI/releases/download/ScrcpyController/XeonScrcpyController_Setup_v1.0.0.exe",
+      "installerFileName": "XeonScrcpyController_Setup_v1.0.0.exe",
+      "fileSize": "56.4 MB",
+      "signature": "Authenticode Signed (CN=AlfandoXeon, DigiCert Timestamp)",
+      "description": "Initial stable release featuring high-performance screen mirroring, low-latency audio capture, dedicated camera mode, OTG keyboard/mouse hardware simulation, device power management (reboot recovery/bootloader), embedded interactive ADB shell terminal, live color-coded application diagnostics, preset manager, and full Inno Setup 64-bit signed installer.",
+      "highlights": [
+        "Complete GUI with 9 categorized control panels (Device, Display, Audio, Window, Advanced, Camera, Tools, OTG, Developer)",
+        "Zero CMD pop-up windows via Windows API CREATE_NO_WINDOW and SW_HIDE execution flags",
+        "Embedded interactive ADB Shell Terminal with security warning gates and quick inspection chips",
+        "Direct lossless screenshot capture straight to host PC without temporary storage writes",
+        "Reboot Power Tools (System, Recovery, Fastboot) with built-in safety confirmation modals",
+        "Portable bundled runtime: Scrcpy v4.1, ADB Platform Tools, and SDL3 Direct3D renderer"
+      ]
+    }
+  ]
+}
